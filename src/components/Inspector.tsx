@@ -48,6 +48,17 @@ export const Inspector: React.FC<InspectorProps> = ({
     ? laptops.find((l) => l.id === explanation.assignedAssetId)
     : null;
 
+  // The sample reveal callout applies ONLY when the exact sample conditions actively hold in this snapshot:
+  // Q-02 requires 16 GB, was waiting in baseline, and is now matched to LT-01 because Q-01 shifted to LT-02.
+  // If Q-02's RAM requirement, LT-01's readiness, or assignments are edited, this callout automatically disappears.
+  const isSampleRevealApplicable =
+    selectedRequest.id === 'Q-02' &&
+    selectedRequest.minRamGb === 16 &&
+    explanation.statusCode === 'MATCHED_NEW' &&
+    explanation.assignedAssetId === 'LT-01' &&
+    baselineResult.assignments['Q-01'] === 'LT-01' &&
+    currentResult.assignments['Q-01'] === 'LT-02';
+
   return (
     <aside className="inspector-panel" aria-label={`Evidence Inspector for ${selectedRequest.id}`}>
       <div className="inspector-card">
@@ -79,9 +90,10 @@ export const Inspector: React.FC<InspectorProps> = ({
           )}
         </div>
 
-        {/* First-Screen Callout for Q-02 */}
-        {selectedRequest.id === 'Q-02' && (
+        {/* First-Screen Callout for Q-02 (Only visible when sample reveal conditions actively hold) */}
+        {isSampleRevealApplicable && (
           <div
+            className="reveal-callout"
             style={{
               backgroundColor: 'var(--color-olive-subtle)',
               border: '1px solid var(--color-olive-border)',

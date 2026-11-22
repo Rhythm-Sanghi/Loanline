@@ -130,6 +130,59 @@ test.describe('Loanline E2E Verification & Judge Route', () => {
     expect(consoleErrors).toEqual([]);
   });
 
+  test('verifies that The Reveal callout disappears dynamically when Q-02 RAM or LT-01 status is edited', async ({ page }, testInfo) => {
+    if (testInfo.project.name !== 'desktop-chrome') return;
+
+    await page.goto('/');
+
+    // 1. Initial golden state: The Reveal is visible for Q-02
+    await expect(page.locator('.reveal-callout')).toBeVisible();
+    await expect(page.locator('.reveal-callout')).toContainText('The Reveal:');
+
+    // 2. Edit LT-01 to 'Repair' status in Inventory tab
+    await page.locator('.nav-tab', { hasText: 'Inventory' }).click();
+    const lt01Row = page.locator('tr', { hasText: 'LT-01' });
+    await lt01Row.getByRole('button', { name: 'Edit' }).click();
+
+    // Change status from Ready to Repair
+    await page.locator('#lap-status').selectOption('Repair');
+    await page.getByRole('button', { name: 'Save edits' }).click();
+
+    // 3. Switch back to Plan tab
+    await page.locator('.nav-tab', { hasText: 'Plan & Allocation' }).click();
+
+    // In this modified state, LT-01 is in Repair so Q-02 cannot receive it.
+    // Verify that the stale "The Reveal" callout has completely disappeared!
+    await expect(page.locator('.reveal-callout')).not.toBeVisible();
+
+    // Q-02 inspector now shows waiting reason instead of stale claims
+    const inspector = page.locator('.inspector-panel');
+    await expect(inspector).toContainText('Q-02');
+    await expect(inspector).toContainText('No compatible laptop');
+
+    // 4. Reset back to sample workspace via modal
+    await page.getByRole('button', { name: /Reset sample/i }).click();
+    await page.getByRole('button', { name: 'Reset workspace' }).click();
+
+    // 5. Verify The Reveal callout reappears on restored sample
+    await expect(page.locator('.reveal-callout')).toBeVisible();
+
+    // 6. Now edit Q-02's RAM requirement to 8 GB in Requests tab
+    await page.locator('.nav-tab', { hasText: 'Requests' }).click();
+    const q02Row = page.locator('tr', { hasText: 'Q-02' });
+    await q02Row.getByRole('button', { name: 'Edit' }).click();
+
+    // Change min RAM to 8 GB
+    await page.locator('#req-ram').selectOption('8');
+    await page.getByRole('button', { name: 'Save edits' }).click();
+
+    // 7. Switch back to Plan tab
+    await page.locator('.nav-tab', { hasText: 'Plan & Allocation' }).click();
+
+    // Verify that The Reveal callout (which claims Q-02 needs 16 GB) is NOT displayed
+    await expect(page.locator('.reveal-callout')).not.toBeVisible();
+  });
+
   test('verifies mobile responsive layout and inspector readability at 390px', async ({ page }, testInfo) => {
     if (testInfo.project.name !== 'mobile-chrome') return;
 
