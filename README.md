@@ -2,7 +2,26 @@
 
 **A browser-based planning tool for campus laptop lending desks: see who can borrow a laptop, why anyone is left waiting, and which stock change would help.**
 
+- **Live Demo**: [https://rhythm-sanghi.github.io/Loanline/](https://rhythm-sanghi.github.io/Loanline/)
+- **Repository**: [https://github.com/Rhythm-Sanghi/Loanline](https://github.com/Rhythm-Sanghi/Loanline)
+
 ![Loanline Allocation Workspace](docs/screenshots/q02-selected.png)
+
+---
+
+## 3-Step Judge Walkthrough
+
+1. **Compare Policies (2 of 4 → 3 of 4)**:
+   - On initial load, view the dual policy comparison cards.
+   - Click **"Queue order · first compatible laptop"** to observe the arrival-order baseline (2 of 4 requests served; Q-02 waits).
+   - Click **"Serve most requests"** to return to Loanline's recommendation (3 of 4 requests served — one more compatible proposal on the same fictional stock).
+2. **Inspect the Reassignment on Row Q-02**:
+   - Inspect request **`Q-02`** (selected by default on the first screen).
+   - The Evidence Inspector explains why `Q-02` is now served: oldest request `Q-01` was shifted from `LT-01` (16 GB) to `LT-02` (8 GB), freeing `LT-01` for `Q-02` which requires 16 GB.
+3. **Preview Repair on Waiting Request Q-04 (3 of 4 → 4 of 4)**:
+   - Click row **`Q-04`** in the table. The inspector explains it cannot be matched because South desk's `LT-03` lacks verified battery and `LT-04` is in repair.
+   - Click **"What if? Preview LT-04"**. The amber preview banner demonstrates that finishing repair on `LT-04` conditionally serves all 4 of 4 requests.
+   - Close the preview to restore the active 3-of-4 plan.
 
 ---
 
@@ -24,7 +43,7 @@ Campus laptop lending programs operate on limited, heterogeneous refurbished inv
 - **Dual-Policy Comparison**: Side-by-side comparison of arrival order first-fit vs. maximum-cardinality augmenting-path matching.
 - **Evidence Inspector**: Explains every assignment or waitlist status using tested, structured reason codes (`MATCHED_REASSIGNED`, `WAITING_NO_COMPATIBLE`, `WAITING_COMPETITION`).
 - **Non-Mutating "What If?" Preview**: Preview how repairing held stock affects allocation proposals on an in-memory clone without altering saved state.
-- **Privacy-Preserving Architecture**: Zero personally identifiable information (no names, emails, phone numbers, or income records). Data is stored locally in the browser profile via versioned `localStorage`.
+- **Client-Side Local Storage**: Zero personally identifiable information (no names, emails, phone numbers, or income records). Data is stored locally in the browser profile via versioned `localStorage`.
 - **Review-Ready Printing**: CSS print rules (`@media print`) format an official allocation proposal for volunteer desk handoff, clearly marked as *"PROPOSED ASSIGNMENT FOR REVIEW · NON-FINAL"*.
 - **Responsive Mobile Layout**: Fully usable at 390 px mobile viewports for floor volunteers with handheld devices.
 
@@ -41,11 +60,14 @@ Campus laptop lending programs operate on limited, heterogeneous refurbished inv
 ### Installation & Local Run
 ```bash
 # Clone the repository
-git clone <repository-url>
-cd Code_For_Change
+git clone https://github.com/Rhythm-Sanghi/Loanline.git
+cd Loanline
 
 # Install pinned dependencies
 npm ci
+
+# Install Playwright Chromium browser binary
+npx playwright install chromium
 
 # Start local development server
 npm run dev
@@ -56,7 +78,7 @@ npm run dev
 # 1. TypeScript static typechecking (zero errors)
 npm run typecheck
 
-# 2. Run unit tests and brute-force oracle verification (48 tests)
+# 2. Run unit tests and brute-force oracle verification (53 tests)
 npm test
 
 # 3. Production build
@@ -124,4 +146,4 @@ src/
 
 ## License
 
-MIT License. See [package.json](package.json).
+MIT License. See [LICENSE](LICENSE).

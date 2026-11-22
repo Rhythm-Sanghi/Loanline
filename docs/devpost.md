@@ -5,9 +5,9 @@
 - **Event**: Code for Change (Student Social-Impact Hackathon)
 - **Submission Deadline**: December 1, 2026 at 5:00 p.m. PST (December 2, 2026 at 6:30 a.m. IST)
 - **Schedule Conflict Notice**: *The hackathon schedule page lists December 5, 2026 for winners announcement, whereas the rules prose references November 21. Entrants should submit well before December 1, 2026 at 5:00 p.m. PST to remain safe.*
-- **Repository**: [Entrant GitHub URL — placeholder]
-- **Live Demo**: [Entrant Deployed Demo URL — placeholder]
-- **Video Walkthrough**: [Entrant Video Link — placeholder]
+- **Repository**: [https://github.com/Rhythm-Sanghi/Loanline](https://github.com/Rhythm-Sanghi/Loanline)
+- **Live Demo**: [https://rhythm-sanghi.github.io/Loanline/](https://rhythm-sanghi.github.io/Loanline/)
+- **Video Walkthrough**: [Link to 90-second walkthrough video — entrant to attach before submission]
 - **Team Members**: Rhythm Sanghi (SVCE Indore · GitHub: [@Rhythm-Sanghi](https://github.com/Rhythm-Sanghi))
 
 ---
@@ -16,9 +16,9 @@
 
 Across university campuses and community digital inclusion programs (such as the Digital Inclusion Initiative's Device & Data Bank), lending desks distribute refurbished laptops to students facing technology barriers.
 
-However, volunteer coordinators face a subtle matching puzzle: laptops arrive with heterogeneous specifications (varying RAM, battery health, and desk locations), while student coursework demands specific technical baselines (e.g. computer science students needing 16 GB RAM for virtualization, commuter students needing verified portable batteries, and desk access limited to North or South campuses).
+In our modeled campus lending desk scenario, laptops arrive with heterogeneous specifications (varying RAM, battery health, and desk locations), while student coursework demands specific technical baselines (e.g. computer science students needing 16 GB RAM, students needing verified portable batteries, and desk access limited to North or South campuses).
 
-When coordinators assign laptops in simple arrival order, flexible students often consume scarce high-spec devices, stranding later students whose requirements can *only* be met by those machines. Furthermore, when requests wait, coordinators have had no way to simulate whether completing a pending bench repair would actually unblock someone or if other constraints would still leave them waiting.
+Under a simple arrival-order first-fit policy, flexible students can consume scarce high-spec devices, stranding later students whose requirements can *only* be met by those machines. Furthermore, when requests wait, coordinators lack a direct way to simulate whether completing a pending bench repair would actually unblock someone or if other constraints would still leave them waiting.
 
 We built **Loanline** to give campus lending coordinators a legible, inspectable planning tool: see who can borrow, why anyone is left waiting, and which stock change would help.
 
@@ -27,18 +27,18 @@ We built **Loanline** to give campus lending coordinators a legible, inspectable
 ## What It Does
 
 1. **Dual Policy Batch Allocation**:
-   - Compares the traditional arrival-order baseline (*"Queue order · first compatible laptop"*) against an optimized bipartite matching (*"Serve most requests"*).
+   - Compares the arrival-order baseline (*"Queue order · first compatible laptop"*) against an optimized bipartite matching (*"Serve most requests"*).
    - In our standard campus benchmark, Loanline yields **one more compatible proposal on the same fictional stock** (increasing proposed assignments from 2 of 4 to 3 of 4).
 2. **Transparent Rationale Inspector**:
    - Coordinators can click any request to see its recorded constraints, evaluated inventory candidates, and a plain-language explanation of why it was assigned or why it waits.
-   - For reassigned borrowers, Loanline explicitly explains: *"In baseline, this request received LT-01. Reassigned to LT-02 to free a scarce configuration for another request, yielding one more compatible proposal on the same fictional stock."*
+   - For reassigned borrowers, Loanline explicitly explains: *"In baseline, this request received LT-01. Reassigned to LT-02 to free a scarce configuration for another request, contributing to 1 more compatible proposal across the batch."*
 3. **"What if?" Stock Repair Simulation**:
    - Coordinators can preview the system-wide effect of completing a repair on a held laptop in a single click.
-   - Simulating the repair of `LT-04` instantly demonstrates an increase from **3 of 4 to 4 of 4 proposed assignments**, highlighting the newly served borrower.
+   - Simulating the repair of `LT-04` demonstrates a conditional increase from **3 of 4 to 4 of 4 proposed assignments**, highlighting the newly served borrower.
    - Previews are strictly non-mutating and excluded from official saved plans.
-4. **Privacy-Preserving Local Storage**:
+4. **Client-Side Local Storage**:
    - Personal information (names, emails, phone numbers, disability or financial data) is excluded from the data model entirely.
-   - All state is versioned and stored locally in the browser profile (`localStorage`), requiring zero backend servers, user accounts, or external tracking.
+   - All state is versioned and stored locally in the browser profile (`localStorage`), with no external server transmission or third-party trackers.
 5. **Printable Official Proposal**:
    - Formats a clean, paper-ready allocation proposal via `@media print` for physical desk handoff, clearly labeled *"PROPOSED ASSIGNMENT FOR REVIEW · NON-FINAL"*.
 
@@ -53,7 +53,7 @@ We built **Loanline** to give campus lending coordinators a legible, inspectable
   - Strict 4/8-pixel grid, 4–6 px border radii, visible keyboard focus indicators, and tabular numerals.
   - No synthetic card grids, gradients, or animated numbers.
 - **Verification Engine**:
-  - **Vitest**: 48 unit tests verifying compatibility rules, golden fixtures, tie-breakers, stability under array shuffling, storage degradation, and a seeded exponential brute-force oracle across randomized graphs.
+  - **Vitest**: 53 unit tests verifying compatibility rules, golden fixtures, tie-breakers, stability under array shuffling, storage degradation, and a seeded exponential brute-force oracle across randomized graphs.
   - **Playwright**: End-to-end browser automation validating the judge route and responsive layouts at 1440 × 900 (desktop) and 390 px (mobile).
 
 ---
@@ -81,8 +81,15 @@ We built **Loanline** to give campus lending coordinators a legible, inspectable
 ## Accomplishments
 
 - Demonstrated that an augmenting-path allocator produces one more compatible proposal on the same fictional stock.
-- Engineered a 100% client-side tool with zero tracking, zero API keys, and complete data privacy.
-- Passed 48 unit tests and 4 Playwright browser tests across desktop and mobile viewports with zero console errors.
+- Engineered a 100% client-side tool with zero server tracking, zero external APIs, and local browser storage.
+- Passed 53 unit tests and Playwright browser tests across desktop and mobile viewports with zero console errors.
+
+---
+
+## Contributions and AI Assistance Record
+
+- **Entrant Contributions**: Rhythm Sanghi formulated the campus lending desk domain model (pickup desks, separate charger/battery verification, and repair preview concept), designed the interface layout and visual language inspired by *Threadmark* and *Benchlight*, reviewed and verified the mathematical matching logic and constraints, and conducted verification testing.
+- **AI Assistance**: Google Antigravity (Gemini models) assisted with project boilerplate scaffolding, formulating pure TypeScript matching and augmenting-path algorithms, authoring Vitest unit tests, storage recovery tests, the seeded oracle test suite, and configuring Playwright browser tests. Full factual details are maintained in [docs/credits.md](credits.md).
 
 ---
 

@@ -1,8 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { explainRequest, simulateRepairPreview } from '../domain/inspector';
+import {
+  explainRequest,
+  simulateRepairPreview,
+  isSampleRevealApplicable,
+} from '../domain/inspector';
 import { computeBothAllocations } from '../domain/allocator';
 import { SAMPLE_REQUESTS, SAMPLE_LAPTOPS } from '../domain/sampleData';
-import { LaptopAsset } from '../types/domain';
+import { LaptopAsset, LoanRequest, AllocationResult } from '../types/domain';
 
 describe('Inspector and Repair Preview', () => {
   const { baseline, recommended } = computeBothAllocations(
@@ -114,5 +118,128 @@ describe('Inspector and Repair Preview', () => {
   it('returns null if preview is requested on a laptop not in Repair status', () => {
     const preview = simulateRepairPreview('LT-01', SAMPLE_REQUESTS, SAMPLE_LAPTOPS, recommended);
     expect(preview).toBeNull();
+  });
+
+  it('explains reassignment without claiming extra proposals when two flexible requests swap laptops and both serve two', () => {
+    const reqA: LoanRequest = {
+      id: 'REQ-A',
+      queueTimestamp: '2026-11-20T09:00:00Z',
+      allowedDesks: ['North'],
+      minRamGb: 8,
+      batteryRequired: false,
+    };
+    const reqB: LoanRequest = {
+      id: 'REQ-B',
+      queueTimestamp: '2026-11-20T09:05:00Z',
+      allowedDesks: ['North'],
+      minRamGb: 8,
+      batteryRequired: false,
+    };
+    const lapA: LaptopAsset = {
+      id: 'LAP-1',
+      pickupDesk: 'North',
+      ramGb: 8,
+      chargerVerified: 'yes',
+      batteryVerified: 'yes',
+      status: 'Ready',
+    };
+    const lapB: LaptopAsset = {
+      id: 'LAP-2',
+      pickupDesk: 'North',
+      ramGb: 8,
+      chargerVerified: 'yes',
+      batteryVerified: 'yes',
+      status: 'Ready',
+    };
+
+    const baselineResult: AllocationResult = {
+      policyId: 'baseline',
+      policyName: 'Baseline',
+      policyDescription: 'Baseline',
+      assignments: { 'REQ-A': 'LAP-1', 'REQ-B': 'LAP-2' },
+      reverseAssignments: { 'LAP-1': 'REQ-A', 'LAP-2': 'REQ-B' },
+      outcomes: [],
+      servedCount: 2,
+      totalRequests: 2,
+    };
+
+    const recommendedResult: AllocationResult = {
+      policyId: 'recommended',
+      policyName: 'Recommended',
+      policyDescription: 'Recommended',
+      assignments: { 'REQ-A': 'LAP-2', 'REQ-B': 'LAP-1' },
+      reverseAssignments: { 'LAP-2': 'REQ-A', 'LAP-1': 'REQ-B' },
+      outcomes: [],
+      servedCount: 2,
+      totalRequests: 2,
+    };
+
+    const explanationA = explainRequest(reqA, [lapA, lapB], recommendedResult, baselineResult);
+    expect(explanationA.statusCode).toBe('MATCHED_REASSIGNED');
+    expect(explanationA.isChangedFromBaseline).toBe(true);
+    expect(explanationA.assignedAssetId).toBe('LAP-2');
+    expect(explanationA.baselineAssetId).toBe('LAP-1');
+    expect(explanationA.summary).toContain('alternative compatible assignment');
+    expect(explanationA.summary).toContain('both policies propose 2 assignments');
+    expect(explanationA.summary).not.toContain('unlock additional proposal');
+    expect(explanationA.summary).not.toContain('one more compatible proposal');
+
+    const explanationB = explainRequest(reqB, [lapA, lapB], recommendedResult, baselineResult);
+    expect(explanationB.statusCode).toBe('MATCHED_REASSIGNED');
+    expect(explanationB.isChangedFromBaseline).toBe(true);
+    expect(explanationB.assignedAssetId).toBe('LAP-1');
+    expect(explanationB.baselineAssetId).toBe('LAP-2');
+    expect(explanationB.summary).toContain('alternative compatible assignment');
+    expect(explanationB.summary).toContain('both policies propose 2 assignments');
+  });
+
+  describe('isSampleRevealApplicable', () => {
+    it('is applicable on baseline default sample data for Q-02', () => {
+      const q2 = SAMPLE_REQUESTS.find((r) => r.id === 'Q-02')!;
+      const explanation = explainRequest(q2, SAMPLE_LAPTOPS, recommended, baseline);
+      expect(isSampleRevealApplicable(q2, SAMPLE_LAPTOPS, explanation, baseline, recommended)).toBe(true);
+    });
+
+    it('remains applicable when LT-01 is upgraded from 16 GB to 32 GB', () => {
+      const upgradedLaptops: LaptopAsset[] = SAMPLE_LAPTOPS.map((l) =>
+        l.id === 'LT-01' ? { ...l, ramGb: 32 } : { ...l }
+      );
+      const { baseline: newBase, recommended: newRec } = computeBothAllocations(
+        SAMPLE_REQUESTS,
+        upgradedLaptops
+      );
+      const q2 = SAMPLE_REQUESTS.find((r) => r.id === 'Q-02')!;
+      const explanation = explainRequest(q2, upgradedLaptops, newRec, newBase);
+
+      expect(isSampleRevealApplicable(q2, upgradedLaptops, explanation, newBase, newRec)).toBe(true);
+    });
+
+    it('returns false when LT-01 is edited to 8 GB breaking the 16 GB pairing', () => {
+      const degradedLaptops: LaptopAsset[] = SAMPLE_LAPTOPS.map((l) =>
+        l.id === 'LT-01' ? { ...l, ramGb: 8 } : { ...l }
+      );
+      const { baseline: newBase, recommended: newRec } = computeBothAllocations(
+        SAMPLE_REQUESTS,
+        degradedLaptops
+      );
+      const q2 = SAMPLE_REQUESTS.find((r) => r.id === 'Q-02')!;
+      const explanation = explainRequest(q2, degradedLaptops, newRec, newBase);
+
+      expect(isSampleRevealApplicable(q2, degradedLaptops, explanation, newBase, newRec)).toBe(false);
+    });
+
+    it('returns false when LT-01 is set to Repair', () => {
+      const repairedLaptops: LaptopAsset[] = SAMPLE_LAPTOPS.map((l) =>
+        l.id === 'LT-01' ? { ...l, status: 'Repair' as const } : { ...l }
+      );
+      const { baseline: newBase, recommended: newRec } = computeBothAllocations(
+        SAMPLE_REQUESTS,
+        repairedLaptops
+      );
+      const q2 = SAMPLE_REQUESTS.find((r) => r.id === 'Q-02')!;
+      const explanation = explainRequest(q2, repairedLaptops, newRec, newBase);
+
+      expect(isSampleRevealApplicable(q2, repairedLaptops, explanation, newBase, newRec)).toBe(false);
+    });
   });
 });

@@ -1,14 +1,16 @@
 import React from 'react';
-import { RepairPreview } from '../types/domain';
+import { RepairPreview, PolicyId } from '../types/domain';
 
 interface RepairPreviewDrawerProps {
   preview: RepairPreview | null;
   onClose: () => void;
+  currentPolicy: PolicyId;
 }
 
 export const RepairPreviewDrawer: React.FC<RepairPreviewDrawerProps> = ({
   preview,
   onClose,
+  currentPolicy,
 }) => {
   if (!preview) return null;
 
@@ -43,7 +45,7 @@ export const RepairPreviewDrawer: React.FC<RepairPreviewDrawerProps> = ({
             PREVIEW ONLY
           </span>
           <span style={{ fontWeight: 600, fontSize: '0.875rem' }}>
-            Simulating {preview.targetAssetId} ({preview.originalStatus} → Ready)
+            Simulating {preview.targetAssetId} ({preview.originalStatus} → Ready) under <strong>Recommended Policy ("Serve most requests")</strong>
           </span>
         </div>
 
@@ -67,13 +69,19 @@ export const RepairPreviewDrawer: React.FC<RepairPreviewDrawerProps> = ({
         }}
       >
         <div>
-          <strong>Stock preview:</strong>{' '}
-          {preview.beforeServedCount} served →{' '}
+          <strong>Conditional gain if repaired:</strong>{' '}
+          {preview.beforeServedCount} proposed →{' '}
           <span style={{ fontWeight: 700, color: 'var(--status-ready-text)' }}>
-            {preview.afterServedCount} served
+            {preview.afterServedCount} proposed
           </span>{' '}
-          ({diff >= 0 ? `+${diff}` : diff} proposal on same stock)
+          (+{diff} conditional proposal)
         </div>
+
+        {currentPolicy === 'baseline' && (
+          <div style={{ fontStyle: 'italic', color: 'var(--color-text-secondary)', background: 'var(--color-surface-sunken)', padding: '2px 6px', borderRadius: '3px' }}>
+            Active plan view: Baseline heuristic. Preview reflects recommended matching with repair applied.
+          </div>
+        )}
 
         {preview.newlyServedRequestIds.length > 0 && (
           <div>

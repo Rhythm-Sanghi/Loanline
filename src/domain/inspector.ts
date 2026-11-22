@@ -37,6 +37,7 @@ export function explainRequest(
 
   const compatibleCandidates = candidateEvaluations.filter((c) => c.isCompatible);
   const blockingReasons: string[] = [];
+  const netGain = currentResult.servedCount - baselineResult.servedCount;
 
   let statusCode: RequestExplanation['statusCode'];
   let headline = '';
@@ -46,11 +47,19 @@ export function explainRequest(
     if (baselineAssetId === null) {
       statusCode = 'MATCHED_NEW';
       headline = 'Assigned under recommended policy';
-      summary = `Previously waiting under queue baseline. In the recommended policy, this request is assigned to ${currentAssetId}, yielding one more compatible proposal on the same fictional stock.`;
+      if (netGain > 0) {
+        summary = `Previously waiting under queue baseline. In the recommended policy, this request is assigned to ${currentAssetId}, contributing to a batch increase of ${netGain} more compatible proposal${netGain === 1 ? '' : 's'}.`;
+      } else {
+        summary = `Previously waiting under queue baseline. In the recommended policy, this request is assigned to ${currentAssetId}.`;
+      }
     } else if (isChangedFromBaseline) {
       statusCode = 'MATCHED_REASSIGNED';
-      headline = 'Reassigned to unlock additional proposal';
-      summary = `In baseline, this request received ${baselineAssetId}. Reassigned to ${currentAssetId} to free a scarce configuration for another request, yielding one more compatible proposal on the same fictional stock.`;
+      headline = 'Reassigned under recommended policy';
+      if (netGain > 0) {
+        summary = `In baseline, this request received ${baselineAssetId}. Reassigned to ${currentAssetId} to free a scarce configuration for another request, contributing to ${netGain} more compatible proposal${netGain === 1 ? '' : 's'} across the batch.`;
+      } else {
+        summary = `In baseline, this request received ${baselineAssetId}. Reassigned to ${currentAssetId} as an alternative compatible assignment (both policies propose ${currentResult.servedCount} assignments).`;
+      }
     } else {
       statusCode = 'MATCHED_SAME';
       headline = 'Assigned compatible laptop';
@@ -178,4 +187,41 @@ export function simulateRepairPreview(
     changedPairings,
     remainingBlockers,
   };
+}
+
+/**
+ * Validates whether the specific Q-02 "Reveal" worked example facts hold in the current state.
+ * Returns true only when:
+ * 1. Q-02 requires >= 16 GB RAM.
+ * 2. LT-01 is Ready, has verified charger, and has >= Q-02's required RAM.
+ * 3. LT-02 is Ready and verified.
+ * 4. In baseline, Q-01 held LT-01 while Q-02 was left unserved.
+ * 5. In recommended, Q-01 is reassigned to LT-02 and Q-02 is served with LT-01.
+ */
+export function isSampleRevealApplicable(
+  selectedRequest: LoanRequest,
+  laptops: LaptopAsset[],
+  explanation: RequestExplanation,
+  baselineResult: AllocationResult,
+  currentResult: AllocationResult
+): boolean {
+  if (selectedRequest.id !== 'Q-02') return false;
+  if (selectedRequest.minRamGb < 16) return false;
+
+  const lt01 = laptops.find((l) => l.id === 'LT-01');
+  const lt02 = laptops.find((l) => l.id === 'LT-02');
+
+  if (!lt01 || lt01.status !== 'Ready' || lt01.chargerVerified !== 'yes') return false;
+  if (lt01.ramGb < selectedRequest.minRamGb) return false;
+
+  if (!lt02 || lt02.status !== 'Ready' || lt02.chargerVerified !== 'yes') return false;
+
+  return (
+    explanation.statusCode === 'MATCHED_NEW' &&
+    explanation.assignedAssetId === 'LT-01' &&
+    baselineResult.assignments['Q-01'] === 'LT-01' &&
+    baselineResult.assignments['Q-02'] === undefined &&
+    currentResult.assignments['Q-01'] === 'LT-02' &&
+    currentResult.assignments['Q-02'] === 'LT-01'
+  );
 }

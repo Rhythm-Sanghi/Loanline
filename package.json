@@ -19,7 +19,7 @@
     "matroid",
     "allocation"
   ],
-  "author": "Code for Change Entrant",
+  "author": "Rhythm Sanghi",
   "license": "MIT",
   "dependencies": {
     "react": "^19.0.0",

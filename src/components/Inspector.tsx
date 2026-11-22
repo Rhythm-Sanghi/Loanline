@@ -4,7 +4,7 @@ import {
   LaptopAsset,
   AllocationResult,
 } from '../types/domain';
-import { explainRequest } from '../domain/inspector';
+import { explainRequest, isSampleRevealApplicable } from '../domain/inspector';
 
 interface InspectorProps {
   selectedRequest: LoanRequest | null;
@@ -48,16 +48,16 @@ export const Inspector: React.FC<InspectorProps> = ({
     ? laptops.find((l) => l.id === explanation.assignedAssetId)
     : null;
 
-  // The sample reveal callout applies ONLY when the exact sample conditions actively hold in this snapshot:
-  // Q-02 requires 16 GB, was waiting in baseline, and is now matched to LT-01 because Q-01 shifted to LT-02.
-  // If Q-02's RAM requirement, LT-01's readiness, or assignments are edited, this callout automatically disappears.
-  const isSampleRevealApplicable =
-    selectedRequest.id === 'Q-02' &&
-    selectedRequest.minRamGb === 16 &&
-    explanation.statusCode === 'MATCHED_NEW' &&
-    explanation.assignedAssetId === 'LT-01' &&
-    baselineResult.assignments['Q-01'] === 'LT-01' &&
-    currentResult.assignments['Q-01'] === 'LT-02';
+  const lt01 = laptops.find((l) => l.id === 'LT-01');
+  const lt02 = laptops.find((l) => l.id === 'LT-02');
+
+  const showSampleReveal = isSampleRevealApplicable(
+    selectedRequest,
+    laptops,
+    explanation,
+    baselineResult,
+    currentResult
+  );
 
   return (
     <aside className="inspector-panel" aria-label={`Evidence Inspector for ${selectedRequest.id}`}>
@@ -90,8 +90,8 @@ export const Inspector: React.FC<InspectorProps> = ({
           )}
         </div>
 
-        {/* First-Screen Callout for Q-02 (Only visible when sample reveal conditions actively hold) */}
-        {isSampleRevealApplicable && (
+        {/* First-Screen Callout for Q-02 (Dynamically derived from current state) */}
+        {showSampleReveal && lt01 && lt02 && (
           <div
             className="reveal-callout"
             style={{
@@ -104,7 +104,7 @@ export const Inspector: React.FC<InspectorProps> = ({
               lineHeight: 1.4,
             }}
           >
-            <strong>The Reveal:</strong> The oldest request (Q-01) can use either laptop. The next request (Q-02) needs 16 GB. Taking laptops in arrival order gives LT-01 (16 GB) to Q-01 and leaves Q-02 waiting. Loanline reassigns Q-01 to LT-02 (8 GB) and gives LT-01 to Q-02: <strong>one more compatible proposal on the same fictional stock</strong>.
+            <strong>The Reveal:</strong> The oldest request (Q-01) can use either laptop. The next request (Q-02) needs at least {selectedRequest.minRamGb} GB. Taking laptops in arrival order gives LT-01 ({lt01.ramGb} GB) to Q-01 and leaves Q-02 waiting. Loanline reassigns Q-01 to LT-02 ({lt02.ramGb} GB) and gives LT-01 to Q-02: <strong>one more compatible proposal on the same fictional stock</strong>.
           </div>
         )}
 

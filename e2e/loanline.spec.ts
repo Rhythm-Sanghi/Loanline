@@ -4,7 +4,7 @@ import * as path from 'path';
 test.describe('Loanline E2E Verification & Judge Route', () => {
   test('executes complete desktop judge workflow, verifies allocator reveal, and captures screenshots', async ({ page }, testInfo) => {
     // Only run full screenshot flow on desktop project
-    if (testInfo.project.name !== 'desktop-chrome') return;
+    test.skip(testInfo.project.name !== 'desktop-chrome', 'Desktop only');
 
     const consoleErrors: string[] = [];
     page.on('console', (msg) => {
@@ -74,16 +74,26 @@ test.describe('Loanline E2E Verification & Judge Route', () => {
     const previewBanner = page.locator('.banner-preview');
     await expect(previewBanner).toBeVisible();
     await expect(previewBanner).toContainText('PREVIEW ONLY');
-    await expect(previewBanner).toContainText('Simulating LT-04 (Repair → Ready)');
-    await expect(previewBanner).toContainText('3 served → 4 served');
-    await expect(previewBanner).toContainText('+1 proposal on same stock');
+    await expect(previewBanner).toContainText('Simulating LT-04 (Repair → Ready) under Recommended Policy ("Serve most requests")');
+    await expect(previewBanner).toContainText('Conditional gain if repaired:');
+    await expect(previewBanner).toContainText('3 proposed → 4 proposed');
+    await expect(previewBanner).toContainText('(+1 conditional proposal)');
     await expect(previewBanner).toContainText('Newly served: Q-04');
 
-    // Verify that print proposal remains at current 3-of-4 plan even during active preview
+    // Verify print media behavior:
+    // Preview banner is hidden (no-print) while print header is visible reflecting current 3-of-4 plan
+    await page.emulateMedia({ media: 'print' });
+    await expect(previewBanner).not.toBeVisible();
     const printHeader = page.locator('.print-header');
+    await expect(printHeader).toBeVisible();
     await expect(printHeader).toContainText('3 of 4 requests served');
     await expect(printHeader).toContainText('Exploratory repair simulations are excluded');
-    await expect(previewBanner).toHaveClass(/no-print/);
+    await expect(page.locator('.data-table tbody tr', { hasText: 'Q-01' })).toContainText('LT-02');
+    await expect(page.locator('.data-table tbody tr', { hasText: 'Q-02' })).toContainText('LT-01');
+    await expect(page.locator('.data-table tbody tr', { hasText: 'Q-03' })).toContainText('LT-03');
+    await expect(page.locator('.data-table tbody tr', { hasText: 'Q-04' })).toContainText('Waiting');
+    await page.emulateMedia({ media: 'screen' });
+    await expect(previewBanner).toBeVisible();
 
     // Capture screenshot: LT-04 repair preview
     const previewScreenshotPath = path.resolve(process.cwd(), 'docs/screenshots/repair-preview.png');
@@ -126,12 +136,30 @@ test.describe('Loanline E2E Verification & Judge Route', () => {
     await expect(baselineCard).toHaveClass(/active/);
     await expect(page.locator('.badge-mono', { hasText: 'Proposed' })).toContainText('2 / 4 Proposed');
 
+    // In baseline, trigger repair preview on Q-04 to verify contextual note and print isolation
+    await q4Row.click();
+    await previewBtn.click();
+    await expect(previewBanner).toBeVisible();
+    await expect(previewBanner).toContainText('Active plan view: Baseline heuristic');
+    await expect(previewBanner).toContainText('Preview reflects recommended matching with repair applied.');
+
+    // Verify print media reflects the active baseline plan (2 of 4) while preview is active
+    await page.emulateMedia({ media: 'print' });
+    await expect(previewBanner).not.toBeVisible();
+    await expect(printHeader).toContainText('2 of 4 requests served');
+    await page.emulateMedia({ media: 'screen' });
+
+    // Close preview and switch back to recommended
+    await closePreviewBtn.click();
+    await expect(previewBanner).not.toBeVisible();
+    await recommendedCard.click();
+
     // Ensure zero uncaught errors
     expect(consoleErrors).toEqual([]);
   });
 
   test('verifies that The Reveal callout disappears dynamically when Q-02 RAM or LT-01 status is edited', async ({ page }, testInfo) => {
-    if (testInfo.project.name !== 'desktop-chrome') return;
+    test.skip(testInfo.project.name !== 'desktop-chrome', 'Desktop only');
 
     await page.goto('/');
 
@@ -184,7 +212,7 @@ test.describe('Loanline E2E Verification & Judge Route', () => {
   });
 
   test('verifies mobile responsive layout and inspector readability at 390px', async ({ page }, testInfo) => {
-    if (testInfo.project.name !== 'mobile-chrome') return;
+    test.skip(testInfo.project.name !== 'mobile-chrome', 'Mobile only');
 
     await page.goto('/');
 

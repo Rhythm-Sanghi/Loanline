@@ -224,6 +224,7 @@ export const App: React.FC = () => {
       <RepairPreviewDrawer
         preview={activePreview}
         onClose={handleClosePreview}
+        currentPolicy={selectedPolicy}
       />
 
       {/* Header and Navigation */}
