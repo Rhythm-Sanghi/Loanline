@@ -1,0 +1,69 @@
+:root {
+  /* Palette based on Rhythm Sanghi's design language:
+     Warm canvas, near-black text, olive accents, quiet grey rules */
+  --color-canvas: #F5F4EE;
+  --color-surface: #FFFFFF;
+  --color-surface-subtle: #FAF9F5;
+  --color-surface-sunken: #EFECE3;
+  --color-surface-selected: #E9E6DB;
+
+  --color-text-primary: #1C211C;
+  --color-text-secondary: #586058;
+  --color-text-tertiary: #7F887F;
+
+  --color-border: #DCD8CD;
+  --color-border-subtle: #E8E5DC;
+  --color-border-strong: #BCB6A6;
+
+  --color-olive: #455D45;
+  --color-olive-hover: #374B37;
+  --color-olive-subtle: #EBF0EB;
+  --color-olive-border: #B7CAB7;
+
+  /* Status Colors */
+  --status-ready-bg: #EAF3EA;
+  --status-ready-text: #245028;
+  --status-ready-border: #BFD8C1;
+
+  --status-repair-bg: #FDF3E7;
+  --status-repair-text: #824F1A;
+  --status-repair-border: #E8D3BC;
+
+  --status-held-bg: #EFEFEA;
+  --status-held-text: #505650;
+  --status-held-border: #D2D2CA;
+
+  --status-waiting-bg: #F5F4EE;
+  --status-waiting-text: #5A625A;
+  --status-waiting-border: #D7D4C8;
+
+  --status-error-bg: #FCEAEA;
+  --status-error-text: #842323;
+  --status-error-border: #E8BEBE;
+
+  --color-accent-amber: #B86200;
+  --color-accent-amber-subtle: #FEF7EE;
+
+  /* Typography */
+  --font-sans: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "Cascadia Code", "Consolas", monospace;
+
+  /* Spacing */
+  --space-2: 2px;
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-32: 32px;
+
+  /* Radii */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+
+  /* Focus ring */
+  --focus-ring: 2px solid var(--color-olive);
+  --focus-offset: 1px;
+}

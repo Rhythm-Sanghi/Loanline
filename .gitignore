@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Production build outputs
+dist/
+
+# Test and coverage outputs
+test-results/
+playwright-report/
+coverage/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment and secrets
+.env
+.env.local
+.env.*.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor and agent temporary files
+.vscode/
+.idea/
+*.swp
+*.swo
