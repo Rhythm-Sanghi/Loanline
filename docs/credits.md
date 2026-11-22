@@ -7,8 +7,8 @@ This document provides a factual record of human contributions, AI assistance, d
 ## 1. Project Contributors
 
 - **Lead Entrant / Developer**: Rhythm Sanghi
-- **Affiliation / Institution**: SVCE Indore (cs24.rhythmsanghi@svceindore.ac.in)
-- **GitHub**: [Rhythm-Sanghi](https://github.com/Rhythm-Sanghi)
+- **Affiliation / Institution**: SVCE Indore
+- **GitHub**: [@Rhythm-Sanghi](https://github.com/Rhythm-Sanghi)
 
 *Note for Entrants: Ensure your team membership, student status, and age eligibility match the official Code for Change rules prior to final Devpost submission.*
 

@@ -67,12 +67,12 @@ export const RepairPreviewDrawer: React.FC<RepairPreviewDrawerProps> = ({
         }}
       >
         <div>
-          <strong>Impact:</strong>{' '}
+          <strong>Stock preview:</strong>{' '}
           {preview.beforeServedCount} served →{' '}
           <span style={{ fontWeight: 700, color: 'var(--status-ready-text)' }}>
             {preview.afterServedCount} served
           </span>{' '}
-          ({diff >= 0 ? `+${diff}` : diff} loans)
+          ({diff >= 0 ? `+${diff}` : diff} proposal on same stock)
         </div>
 
         {preview.newlyServedRequestIds.length > 0 && (

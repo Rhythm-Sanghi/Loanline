@@ -47,11 +47,13 @@ test.describe('Loanline E2E Verification & Judge Route', () => {
     const q4Row = page.locator('tr', { hasText: 'Q-04' });
     await expect(q4Row).toContainText('Waiting');
 
-    // 5. Verify Inspector for default selection (Q-02)
+    // 5. Verify Inspector for default selection (Q-02) - immediately visible on first screen
     const inspector = page.locator('.inspector-panel');
     await expect(inspector).toContainText('Q-02');
     await expect(inspector).toContainText('Assigned under recommended policy');
-    await expect(inspector).toContainText('Previously waiting under queue baseline');
+    await expect(inspector).toContainText('The Reveal: The oldest request (Q-01) can use either laptop');
+    await expect(inspector).toContainText('one more compatible proposal on the same fictional stock');
+    await expect(page.locator('.panel-subtitle')).toContainText('Selected: Q-02');
 
     // Capture screenshot: recommendation with Q-02 selected
     const q02ScreenshotPath = path.resolve(process.cwd(), 'docs/screenshots/q02-selected.png');
@@ -73,8 +75,15 @@ test.describe('Loanline E2E Verification & Judge Route', () => {
     await expect(previewBanner).toBeVisible();
     await expect(previewBanner).toContainText('PREVIEW ONLY');
     await expect(previewBanner).toContainText('Simulating LT-04 (Repair → Ready)');
-    await expect(previewBanner).toContainText('3 served → 4 served (+1 loans)');
+    await expect(previewBanner).toContainText('3 served → 4 served');
+    await expect(previewBanner).toContainText('+1 proposal on same stock');
     await expect(previewBanner).toContainText('Newly served: Q-04');
+
+    // Verify that print proposal remains at current 3-of-4 plan even during active preview
+    const printHeader = page.locator('.print-header');
+    await expect(printHeader).toContainText('3 of 4 requests served');
+    await expect(printHeader).toContainText('Exploratory repair simulations are excluded');
+    await expect(previewBanner).toHaveClass(/no-print/);
 
     // Capture screenshot: LT-04 repair preview
     const previewScreenshotPath = path.resolve(process.cwd(), 'docs/screenshots/repair-preview.png');
@@ -84,6 +93,10 @@ test.describe('Loanline E2E Verification & Judge Route', () => {
     const closePreviewBtn = page.getByRole('button', { name: /Close.*preview/i });
     await closePreviewBtn.click();
     await expect(previewBanner).not.toBeVisible();
+
+    // Verify view returns to 3 of 4
+    await expect(page.locator('.policy-card', { hasText: 'Serve most requests' })).toContainText('3 of 4');
+    await expect(page.locator('.badge-mono', { hasText: 'Proposed' })).toContainText('3 / 4 Proposed');
 
     // 8. Tab Navigation: Requests & Inventory
     const requestsTab = page.locator('.nav-tab', { hasText: 'Requests' });
@@ -111,7 +124,7 @@ test.describe('Loanline E2E Verification & Judge Route', () => {
     // 10. Switch policy to baseline and verify UI updates
     await baselineCard.click();
     await expect(baselineCard).toHaveClass(/active/);
-    await expect(page.locator('.badge-mono', { hasText: 'Assigned' })).toContainText('2 / 4 Assigned');
+    await expect(page.locator('.badge-mono', { hasText: 'Proposed' })).toContainText('2 / 4 Proposed');
 
     // Ensure zero uncaught errors
     expect(consoleErrors).toEqual([]);

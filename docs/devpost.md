@@ -8,7 +8,7 @@
 - **Repository**: [Entrant GitHub URL — placeholder]
 - **Live Demo**: [Entrant Deployed Demo URL — placeholder]
 - **Video Walkthrough**: [Entrant Video Link — placeholder]
-- **Team Members**: Rhythm Sanghi (SVCE Indore · cs24.rhythmsanghi@svceindore.ac.in)
+- **Team Members**: Rhythm Sanghi (SVCE Indore · GitHub: [@Rhythm-Sanghi](https://github.com/Rhythm-Sanghi))
 
 ---
 
@@ -20,7 +20,7 @@ However, volunteer coordinators face a subtle matching puzzle: laptops arrive wi
 
 When coordinators assign laptops in simple arrival order, flexible students often consume scarce high-spec devices, stranding later students whose requirements can *only* be met by those machines. Furthermore, when requests wait, coordinators have had no way to simulate whether completing a pending bench repair would actually unblock someone or if other constraints would still leave them waiting.
 
-We built **Loanline** to give campus lending coordinators a legible, inspectable planning tool: see who can borrow, why anyone is left waiting, and which repair would help most.
+We built **Loanline** to give campus lending coordinators a legible, inspectable planning tool: see who can borrow, why anyone is left waiting, and which stock change would help.
 
 ---
 
@@ -28,13 +28,13 @@ We built **Loanline** to give campus lending coordinators a legible, inspectable
 
 1. **Dual Policy Batch Allocation**:
    - Compares the traditional arrival-order baseline (*"Queue order · first compatible laptop"*) against an optimized bipartite matching (*"Serve most requests"*).
-   - In our standard campus benchmark, Loanline increases served students from **2 of 4 to 3 of 4 on the exact same refurbished inventory**.
+   - In our standard campus benchmark, Loanline yields **one more compatible proposal on the same fictional stock** (increasing proposed assignments from 2 of 4 to 3 of 4).
 2. **Transparent Rationale Inspector**:
    - Coordinators can click any request to see its recorded constraints, evaluated inventory candidates, and a plain-language explanation of why it was assigned or why it waits.
-   - For reassigned borrowers, Loanline explicitly explains: *"In baseline, this request received LT-01. Reassigned to LT-02 to free a scarce configuration for another request."*
+   - For reassigned borrowers, Loanline explicitly explains: *"In baseline, this request received LT-01. Reassigned to LT-02 to free a scarce configuration for another request, yielding one more compatible proposal on the same fictional stock."*
 3. **"What if?" Stock Repair Simulation**:
    - Coordinators can preview the system-wide effect of completing a repair on a held laptop in a single click.
-   - Simulating the repair of `LT-04` instantly demonstrates an increase from **3 of 4 to 4 of 4 loans**, highlighting the newly served borrower.
+   - Simulating the repair of `LT-04` instantly demonstrates an increase from **3 of 4 to 4 of 4 proposed assignments**, highlighting the newly served borrower.
    - Previews are strictly non-mutating and excluded from official saved plans.
 4. **Privacy-Preserving Local Storage**:
    - Personal information (names, emails, phone numbers, disability or financial data) is excluded from the data model entirely.
@@ -62,7 +62,7 @@ We built **Loanline** to give campus lending coordinators a legible, inspectable
 
 | Judging Criterion | How Loanline Delivers | Exact Demo / Verification Moment |
 | :--- | :--- | :--- |
-| **Impact** | Increases device utilization for low-income and commuter students without purchasing new hardware. Direct repair preview helps technicians prioritize the workbench. | 12–35 sec in demo: 2 of 4 served becomes 3 of 4 served on the exact same stock. |
+| **Impact** | Demonstrates how inspectable matching and repair previews can unlock more compatible proposals without purchasing new hardware. | 12–35 sec in demo: shows one more compatible proposal on the same fictional stock (2 of 4 to 3 of 4). |
 | **Originality** | Combines inspectable transversal matroid matching with non-mutating bench repair simulations, addressing the specific operational workflow of campus lending desks. | Distinct from single-device allocators (Auxilium, connectivIT); focused on batch proposal transparency. |
 | **Technical Execution** | Zero-dependency TypeScript allocator, shared compatibility predicate, deterministic tie-breaking, and a seeded exponential brute-force test oracle. | `src/test/oracle.test.ts` (15 randomized trials matching the oracle) and 100% clean typecheck. |
 | **Usability** | Single-screen central work area with 340 px evidence inspector, keyboard row navigation (`ArrowUp`/`ArrowDown`), and inline error preservation on forms. | 1440 × 900 desktop and 390 px mobile view tested in Playwright without overflow. |
@@ -80,7 +80,7 @@ We built **Loanline** to give campus lending coordinators a legible, inspectable
 
 ## Accomplishments
 
-- Successfully proved that an augmenting-path allocator increases laptop lending capacity on identical physical inventory.
+- Demonstrated that an augmenting-path allocator produces one more compatible proposal on the same fictional stock.
 - Engineered a 100% client-side tool with zero tracking, zero API keys, and complete data privacy.
 - Passed 48 unit tests and 4 Playwright browser tests across desktop and mobile viewports with zero console errors.
 
@@ -93,9 +93,9 @@ We built **Loanline** to give campus lending coordinators a legible, inspectable
 
 ---
 
-## What's Next & Pilot Questions
+## What's Next & Coordinator Questions
 
-Before conducting a real pilot with campus lending desks, coordinators should address three open operational policy questions:
+Before any future field evaluation with campus lending desks, coordinators would need to address three open operational policy questions:
 1. *What defines "Ready"?* Is battery capacity tested under load, or is visual charging sufficient?
 2. *How is pickup desk access determined?* Can students travel between campuses, or must devices strictly stay at their home desk?
 3. *Is arrival timestamp the appropriate tie-breaker?* Or should academic/financial necessity override queue order?

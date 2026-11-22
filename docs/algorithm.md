@@ -97,7 +97,7 @@ Consider the official competition fixture:
 When the coordinator simulates completing the repair on `LT-04` (`Repair` $\to$ `Ready`):
 - `LT-04` becomes eligible for `Q-04` (South, 8 GB, verified battery, verified charger).
 - Augmenting path $\text{Q-04} \to \text{LT-04}$ immediately succeeds.
-- Total served increases from **3 of 4** to **4 of 4** (+1 loan).
+- Total served increases from **3 of 4** to **4 of 4** (+1 compatible proposal on the same fictional stock).
 
 ---
 
@@ -151,3 +151,4 @@ A judge or reviewer can directly inspect these files in the workspace:
 - `src/test/allocator.test.ts`: Test cases covering the golden sample, multi-hop chains, reordering stability, and tie-breaking.
 - `src/test/oracle.test.ts`: Seeded brute-force oracle proving maximum cardinality and queue preference.
 - `src/test/inspector.test.ts`: Verification of explanation narratives and non-mutating preview behavior.
+

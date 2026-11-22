@@ -9,8 +9,8 @@ A timed 75–90 second demonstration script with exact click-by-click instructio
 | Time | On Screen | Action | Spoken Narration |
 | :--- | :--- | :--- | :--- |
 | **0:00 – 0:12** | Populated Workspace (`Plan & Allocation`) | Open app. Point to header badge `Sample workspace` and two pickup desks. | *"A campus laptop lending desk operates on limited, heterogeneous refurbished stock. A laptop that works for one student may be the only device that fits another."* |
-| **0:12 – 0:35** | Policy Cards & Q-02 Inspector | Toggle between `Queue order` (2 of 4) and `Serve most requests` (3 of 4). Highlight Q-02's row in table and inspector panel. | *"Under arrival order, Q-01 greedily takes our only 16 GB laptop, stranding Q-02 with no device. Loanline finds an augmenting path: Q-01 can use an 8 GB laptop, freeing the 16 GB unit for Q-02. One more student served on the exact same stock."* |
-| **0:35 – 0:58** | Q-04 Inspector & Repair Preview | Click row Q-04. Show `No compatible laptop` (needs battery at South). Click `What if? Preview LT-04`. | *"Q-04 still waits because South desk's LT-03 lacks battery verification and LT-04 is in repair. By previewing LT-04 as ready, the coordinator immediately sees that completing this single repair unlocks a fourth loan."* |
+| **0:12 – 0:35** | Policy Cards & Q-02 Inspector | Toggle between `Queue order` (2 of 4) and `Serve most requests` (3 of 4). Highlight Q-02's row in table and inspector panel. | *"Under arrival order, Q-01 greedily takes our only 16 GB laptop, stranding Q-02 with no device. Loanline finds an augmenting path: Q-01 can use an 8 GB laptop, freeing the 16 GB unit for Q-02. One more compatible proposal on the same fictional stock."* |
+| **0:35 – 0:58** | Q-04 Inspector & Repair Preview | Click row Q-04. Show `No compatible laptop` (needs battery at South). Click `What if? Preview LT-04`. | *"Q-04 still waits because South desk's LT-03 lacks battery verification and LT-04 is in repair. By previewing LT-04 as ready, the coordinator immediately sees that completing this single repair unlocks a fourth compatible proposal."* |
 | **0:58 – 1:15** | Preview Dismissal & Print Review | Click `✕ Close preview`. Click `Print plan` (or show print preview). | *"The preview is completely non-mutating: closing it restores our 3 of 4 baseline. When ready, the coordinator prints an official proposal for physical review before distributing devices."* |
 | **1:15 – 1:30** | Test Suite & Conclusion | Show terminal running `npm test` (all 48 tests passing) and GitHub Actions badge. | *"Every edge condition is mathematically verified against an exponential brute-force oracle. All data shown is fictional, and Loanline keeps personal information completely out of the system."* |
 
@@ -88,8 +88,10 @@ A timed 75–90 second demonstration script with exact click-by-click instructio
 ### 2. Describing Your Contribution
 > *"My core focus was building an inspectable, deterministic augmenting-path allocator in pure TypeScript. Rather than treating allocation as a black box, I formulated the problem as a transversal matroid and wrote a seeded brute-force oracle test suite to prove that our greedy queue traversal always matches the maximum reachable subset of students."*
 
-### 3. Pilot Metrics & Real-World Outreach
-If speaking to campus lending coordinators, frame a future pilot around these three measurable metrics:
-1. **Compatible loans completed per batch**: Percentage of distributed laptops that remain in active use without emergency returns.
-2. **Unmet request reasons**: Structured breakdown of why requests wait (e.g. 60% desk mismatch vs. 40% battery deficit), informing refurbishment priorities.
-3. **Coordinator review time per batch**: Reduction in manual spreadsheet cross-referencing prior to loan distribution.
+### 3. Exploratory Coordinator Questions & Verification Metrics
+If discussing this planning tool with campus lending coordinators, frame future exploration around these three operational questions:
+1. **Proposed assignments accepted without hardware mismatch**: Percentage of proposed matches that verify successfully upon physical inspection.
+2. **Unmet request reasons**: Structured breakdown of why requests wait (e.g. 60% desk mismatch vs. 40% battery deficit), informing bench repairs.
+3. **Coordinator inspection time per batch**: Reduction in manual spreadsheet cross-referencing prior to equipment assignment.
+
+

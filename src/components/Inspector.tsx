@@ -79,6 +79,23 @@ export const Inspector: React.FC<InspectorProps> = ({
           )}
         </div>
 
+        {/* First-Screen Callout for Q-02 */}
+        {selectedRequest.id === 'Q-02' && (
+          <div
+            style={{
+              backgroundColor: 'var(--color-olive-subtle)',
+              border: '1px solid var(--color-olive-border)',
+              borderRadius: '4px',
+              padding: '8px 10px',
+              fontSize: '0.8125rem',
+              color: 'var(--color-text-primary)',
+              lineHeight: 1.4,
+            }}
+          >
+            <strong>The Reveal:</strong> The oldest request (Q-01) can use either laptop. The next request (Q-02) needs 16 GB. Taking laptops in arrival order gives LT-01 (16 GB) to Q-01 and leaves Q-02 waiting. Loanline reassigns Q-01 to LT-02 (8 GB) and gives LT-01 to Q-02: <strong>one more compatible proposal on the same fictional stock</strong>.
+          </div>
+        )}
+
         {/* Narrative explanation */}
         <div className="inspector-section">
           <span className="inspector-label">Allocation Rationale</span>

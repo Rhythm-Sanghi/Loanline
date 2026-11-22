@@ -66,6 +66,9 @@ export const PlanView: React.FC<PlanViewProps> = ({
         <p>
           <strong>Selected Policy:</strong> {activeResult.policyName} ({activeResult.servedCount} of {activeResult.totalRequests} requests served)
         </p>
+        <p style={{ fontSize: '8pt', color: '#555555', marginTop: '2px' }}>
+          * Exploratory repair simulations are excluded from printed proposals. Reflects active adopted stock.
+        </p>
         <span className="print-disclaimer">
           Proposed assignment for review · Subject to physical asset check
         </span>
@@ -86,11 +89,11 @@ export const PlanView: React.FC<PlanViewProps> = ({
             <h2 className="panel-title">
               Batch Requests &amp; Proposed Assignments
               <span className="badge badge-mono">
-                {activeResult.servedCount} / {requests.length} Assigned
+                {activeResult.servedCount} / {requests.length} Proposed
               </span>
             </h2>
             <p className="panel-subtitle">
-              Use arrow keys or click to inspect constraints and compatibility evidence.
+              Selected: <strong className="mono-val">{selectedRequestId || 'None'}</strong> — See Evidence Inspector on the right for constraints and compatibility.
             </p>
           </div>
         </div>

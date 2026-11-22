@@ -46,11 +46,11 @@ export function explainRequest(
     if (baselineAssetId === null) {
       statusCode = 'MATCHED_NEW';
       headline = 'Assigned under recommended policy';
-      summary = `Previously waiting under queue baseline. In the recommended policy, this request is assigned to ${currentAssetId}.`;
+      summary = `Previously waiting under queue baseline. In the recommended policy, this request is assigned to ${currentAssetId}, yielding one more compatible proposal on the same fictional stock.`;
     } else if (isChangedFromBaseline) {
       statusCode = 'MATCHED_REASSIGNED';
-      headline = 'Reassigned to unlock additional loan';
-      summary = `In baseline, this request received ${baselineAssetId}. Reassigned to ${currentAssetId} to free a scarce configuration for another request.`;
+      headline = 'Reassigned to unlock additional proposal';
+      summary = `In baseline, this request received ${baselineAssetId}. Reassigned to ${currentAssetId} to free a scarce configuration for another request, yielding one more compatible proposal on the same fictional stock.`;
     } else {
       statusCode = 'MATCHED_SAME';
       headline = 'Assigned compatible laptop';

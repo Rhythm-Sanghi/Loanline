@@ -12,8 +12,8 @@ Campus laptop lending programs operate on limited, heterogeneous refurbished inv
 
 ### The Competition Benchmark Reveal:
 - **Arrival Order Baseline**: The oldest request (`Q-01`, 8 GB min at North) greedily takes the first matching laptop (`LT-01`, 16 GB). The next request (`Q-02`, 16 GB min at North) is left waiting because no other 16 GB laptop exists. Result: **2 of 4 requests served**.
-- **Loanline Recommended Matching**: Reassigns `Q-01` to `LT-02` (8 GB) and allocates `LT-01` (16 GB) to `Q-02`. Both students are served. Result: **3 of 4 requests served on the exact same stock**.
-- **"What if?" Stock Preview**: Request `Q-04` still waits because South desk's `LT-03` lacks verified battery and `LT-04` is in repair. By simulating completing repair on `LT-04`, Loanline shows that a 4th loan is instantly unlocked (**4 of 4 requests served**).
+- **Loanline Recommended Matching**: Reassigns `Q-01` to `LT-02` (8 GB) and allocates `LT-01` (16 GB) to `Q-02`. Both students are served. Result: **3 of 4 requests served — one more compatible proposal on the same fictional stock**.
+- **"What if?" Stock Preview**: Request `Q-04` still waits because South desk's `LT-03` lacks verified battery and `LT-04` is in repair. By simulating completing repair on `LT-04`, Loanline previews serving the fourth request (**4 of 4 requests proposed**).
 
 ![Repair Preview Simulation](docs/screenshots/repair-preview.png)
 
@@ -23,7 +23,7 @@ Campus laptop lending programs operate on limited, heterogeneous refurbished inv
 
 - **Dual-Policy Comparison**: Side-by-side comparison of arrival order first-fit vs. maximum-cardinality augmenting-path matching.
 - **Evidence Inspector**: Explains every assignment or waitlist status using tested, structured reason codes (`MATCHED_REASSIGNED`, `WAITING_NO_COMPATIBLE`, `WAITING_COMPETITION`).
-- **Non-Mutating "What If?" Preview**: Test the impact of repairing held laptops on an in-memory clone without altering saved state.
+- **Non-Mutating "What If?" Preview**: Preview how repairing held stock affects allocation proposals on an in-memory clone without altering saved state.
 - **Privacy-Preserving Architecture**: Zero personally identifiable information (no names, emails, phone numbers, or income records). Data is stored locally in the browser profile via versioned `localStorage`.
 - **Review-Ready Printing**: CSS print rules (`@media print`) format an official allocation proposal for volunteer desk handoff, clearly marked as *"PROPOSED ASSIGNMENT FOR REVIEW · NON-FINAL"*.
 - **Responsive Mobile Layout**: Fully usable at 390 px mobile viewports for floor volunteers with handheld devices.
